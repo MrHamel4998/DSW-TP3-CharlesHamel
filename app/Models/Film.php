@@ -37,4 +37,9 @@ class Film extends Model
     {
         return $this->belongsToMany('App\Models\Actor');
     }
+
+    public function statistic()
+    {
+        return $this->hasOne('App\Models\FilmStatistic');
+    }
 }
