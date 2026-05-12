@@ -1,41 +1,41 @@
-"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
 scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
-"Indicates what fields are available at the top level of a query operation."
-type Query {
-    "Find a single user by an identifying attribute."
-    user(
-      "Search by primary key."
-      id: ID @eq @rules(apply: ["prohibits:email", "required_without:email"])
+type Film {
+    id: ID!
+    title: String!
+    description: String
+    release_year: Int
+    length: Int
 
-      "Search by email address."
-      email: String @eq @rules(apply: ["prohibits:id", "required_without:id", "email"])
-    ): User @find
-
-    "List multiple users."
-    users(
-      "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
-      name: String @where(operator: "like")
-    ): [User!]! @paginate(defaultCount: 10)
+    critics: [Critics!]! @hasMany
+    actors: [Actor!]! @belongsToMany
 }
 
-"Account of a person who uses this application."
-type User {
-    "Unique primary key."
+type Critics {
     id: ID!
+    score: Float!
+    comment: String!
+}
 
-    "Non-unique name."
-    name: String!
+type Actor {
+    id: ID!
+    last_name: String!
+    first_name: String!
+    birthdate: DateTime
+}
 
-    "Unique email address."
-    email: String!
+type Query {
 
-    "When the email was verified."
-    email_verified_at: DateTime
+    film(id: ID! @eq): Film @find
 
-    "When the account was created."
-    created_at: DateTime!
+    films(
+        title: String @where(operator: "like")
+        description: String @where(operator: "like")
 
-    "When the account was last updated."
-    updated_at: DateTime!
+        min_year: Int @where(key: "release_year", operator: ">=")
+
+        min_length: Int @where(key: "length", operator: ">=")
+
+        max_length: Int @where(key: "length", operator: "<=")
+    ): [Film!]! @paginate(defaultCount: 10)
 }
