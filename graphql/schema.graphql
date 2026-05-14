@@ -21,7 +21,6 @@ type Mutation {
         film_id: ID!
         score: Float!
         comment: String!
-        user_id: ID
     ): FilmStatistic! @guard @inject(context: "user.id", name: "user_id")
 
     addActorAsAdmin(
