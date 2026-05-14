@@ -12,8 +12,6 @@ type Query {
     ): [Film!]! @paginate(defaultCount: 10)
 
     me: User! @auth
-
-    myCritics: [Critic!]! @guard @inject(context: "user.id", name: "user_id")
 }
 
 type Mutation {

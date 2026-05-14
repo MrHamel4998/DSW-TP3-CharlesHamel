@@ -376,11 +376,16 @@ query Me {
 # Consulter les critiques de l’utilisateur authentifié
 
 ```graphql
-query MyCritics {
-    myCritics {
+query Me {
+    me {
         id
-        score
-        comment
+        name
+        email
+        critics {
+            id
+            score
+            comment
+        }
     }
 }
 ```
@@ -388,13 +393,18 @@ query MyCritics {
 ```json
 {
     "data": {
-        "myCritics": [
-            {
-                "id": "1",
-                "score": 5.4,
-                "comment": "Bien"
-            }
-        ]
+        "me": {
+            "id": "2",
+            "name": "Admin2",
+            "email": "admin2@example.com",
+            "critics": [
+                {
+                    "id": "2",
+                    "score": 85,
+                    "comment": "Bon film"
+                }
+            ]
+        }
     }
 }
 ```
