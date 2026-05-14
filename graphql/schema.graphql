@@ -4,8 +4,8 @@ type Query {
     film(id: ID! @eq): Film @find
 
     films(
-        title: String @where(operator: "like")
-        description: String @where(operator: "like")
+        title: String @where(key: "title" operator: "LIKE")
+        description: String @where(key: "description", operator: "LIKE")
         min_year: Int @where(key: "release_year", operator: ">=")
         min_length: Int @where(key: "length", operator: ">=")
         max_length: Int @where(key: "length", operator: "<=")
