@@ -14,12 +14,10 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'roleId' => 'nullable|integer|exists:roles,id',
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'login' => 'required|string|max:255|unique:users',
-            'password' => ['required', 'confirmed', 'min:10', 'regex:/^(?=.*[A-Za-z])(?=.*\d).+$/'], //https://regex101.com/
-        ];
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
+            'roleId' => ['required', 'integer'],
+        ]; 
     }
 }

@@ -1,20 +1,74 @@
 scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
+type Query {
+    film(id: ID! @eq): Film @find
+
+    films(
+        title: String @where(operator: "like")
+        description: String @where(operator: "like")
+        min_year: Int @where(key: "release_year", operator: ">=")
+        min_length: Int @where(key: "length", operator: ">=")
+        max_length: Int @where(key: "length", operator: "<=")
+    ): [Film!]! @paginate(defaultCount: 10)
+
+    me: User! @auth
+
+    myCritics: [Critic!]! @guard @inject(context: "user.id", name: "user_id")
+}
+
+type Mutation {
+    addMyCritic(
+        film_id: ID!
+        score: Float!
+        comment: String!
+        user_id: ID
+    ): FilmStatistic! @guard @inject(context: "user.id", name: "user_id")
+
+    addActorAsAdmin(
+        last_name: String!
+        first_name: String!
+        birthdate: DateTime
+        film_ids: [ID!]
+        film_images: [FilmImageUpdateInput!]
+    ): Actor! @guard
+}
+
+input FilmImageUpdateInput {
+    film_id: ID!
+    image: String!
+}
+
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    critics: [Critic!]! @hasMany
+}
+
+type Critic {
+    id: ID!
+    score: Float!
+    comment: String!
+    film: Film! @belongsTo
+}
+
 type Film {
     id: ID!
     title: String!
     description: String
     release_year: Int
     length: Int
-
-    critics: [Critics!]! @hasMany
+    image: String
+    critics: [Critic!]! @hasMany
     actors: [Actor!]! @belongsToMany
+    statistic: FilmStatistic @hasOne
 }
 
-type Critics {
+type FilmStatistic {
     id: ID!
-    score: Float!
-    comment: String!
+    film_id: ID!
+    average_score: Float!
+    total_ratings: Int!
 }
 
 type Actor {
@@ -22,20 +76,5 @@ type Actor {
     last_name: String!
     first_name: String!
     birthdate: DateTime
-}
-
-type Query {
-
-    film(id: ID! @eq): Film @find
-
-    films(
-        title: String @where(operator: "like")
-        description: String @where(operator: "like")
-
-        min_year: Int @where(key: "release_year", operator: ">=")
-
-        min_length: Int @where(key: "length", operator: ">=")
-
-        max_length: Int @where(key: "length", operator: "<=")
-    ): [Film!]! @paginate(defaultCount: 10)
+    films: [Film!]! @belongsToMany
 }
